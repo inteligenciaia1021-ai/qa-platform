@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from qa_platform.knowledge.catalogo import buscar_no_catalogo
+from qa_platform.knowledge.catalogo_frontend import buscar_no_catalogo_frontend
 from qa_platform.knowledge.catalogo_python import buscar_no_catalogo_python
 from qa_platform.knowledge.fingerprint import gerar_fingerprint
 from qa_platform.knowledge.store import Store
@@ -15,11 +16,11 @@ class Diagnostico:
 
 
 def _procurar_playbook(store: Store, fingerprint: str, mensagem: str) -> dict | None:
-    # Ordem de prioridade: banco (guia salvo por você), catálogo do ruff,
-    # catálogo de erros do Python.
+    # Ordem de prioridade: banco (guia salvo por você), depois os catálogos.
     return (
         store.buscar_playbook(fingerprint)
         or buscar_no_catalogo(mensagem)
+        or buscar_no_catalogo_frontend(mensagem)
         or buscar_no_catalogo_python(mensagem)
     )
 
