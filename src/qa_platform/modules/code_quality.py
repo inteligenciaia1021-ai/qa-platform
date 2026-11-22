@@ -19,7 +19,7 @@ class CodeQuality:
             check=False,
         )
         # ruff retorna 0 (sem problemas) ou 1 (achou problemas); outro valor é falha real
-        if resultado.returncode not in (0, 1):
+        if resultado.returncode not in (0, 1) or not resultado.stdout.strip():
             raise RuntimeError(f"ruff falhou: {resultado.stderr.strip()}")
 
         achados = json.loads(resultado.stdout or "[]")

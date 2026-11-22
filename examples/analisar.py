@@ -5,9 +5,15 @@ from qa_platform.knowledge.store import Store
 from qa_platform.modules.backend import Backend
 from qa_platform.modules.code_quality import CodeQuality
 from qa_platform.modules.frontend import Frontend
+from qa_platform.modules.seguranca import Seguranca
 from qa_platform.reporters.texto import formatar
 
-MODULOS = {"code_quality": CodeQuality, "backend": Backend, "frontend": Frontend}
+MODULOS = {
+    "code_quality": CodeQuality,
+    "backend": Backend,
+    "frontend": Frontend,
+    "security": Seguranca,
+}
 
 caminho = sys.argv[1] if len(sys.argv) > 1 else "."
 nome = sys.argv[2] if len(sys.argv) > 2 else "code_quality"
