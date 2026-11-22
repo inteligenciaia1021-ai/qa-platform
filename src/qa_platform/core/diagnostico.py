@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from qa_platform.knowledge.catalogo import buscar_no_catalogo
 from qa_platform.knowledge.fingerprint import gerar_fingerprint
 from qa_platform.knowledge.store import Store
 
@@ -20,5 +21,5 @@ def diagnosticar(store: Store, modulo: str, mensagem: str, stack: str | None = N
         fingerprint=fingerprint,
         ja_visto=ja_visto,
         ocorrencias=bug["ocorrencias"],
-        playbook=store.buscar_playbook(fingerprint),
+        playbook=store.buscar_playbook(fingerprint) or buscar_no_catalogo(mensagem),
     )
