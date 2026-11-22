@@ -54,6 +54,20 @@ def _rede(req, anotar) -> None:
         anotar(f"Falha de rede ao carregar: {req.url}")
 
 
+def _sem_duplicatas(mensagens: list[str]) -> list[str]:
+    # Se um endereço já tem outro alerta (ex.: HTTP 404), a "falha de rede"
+    # do mesmo endereço é a mesma causa contada duas vezes.
+    prefixo = "Falha de rede ao carregar: "
+    resultado = []
+    for texto in mensagens:
+        if texto.startswith(prefixo):
+            endereco = texto[len(prefixo):]
+            if any(endereco in outra for outra in mensagens if outra != texto):
+                continue
+        resultado.append(texto)
+    return resultado
+
+
 class Frontend:
     nome = "frontend"
 
@@ -98,4 +112,4 @@ class Frontend:
                     anotar(f"Imagem sem texto alternativo: {origem[:80]}")
             finally:
                 navegador.close()
-        return [Falha(self.nome, texto, url) for texto in mensagens]
+            return [Falha(self.nome, texto, url) for texto in _sem_duplicatas(mensagens)]

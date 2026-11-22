@@ -48,3 +48,9 @@ def test_endereco_inexistente_e_reportado():
     falhas = Frontend().rodar("http://127.0.0.1:1/")
     assert len(falhas) == 1
     assert falhas[0].mensagem.startswith("Página não abriu")
+
+
+def test_estilo_ausente_gera_um_alerta_so(tmp_path):
+    html = PAGINA_OK.replace("</head>", '<link rel="stylesheet" href="sumiu.css"></head>')
+    mensagens = _mensagens(Frontend().rodar(_site(tmp_path, html)))
+    assert len([m for m in mensagens if "sumiu.css" in m]) == 1
