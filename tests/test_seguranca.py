@@ -51,3 +51,42 @@ def test_le_resultado_do_pip_audit():
 def test_dependencias_sem_vulnerabilidade_nao_geram_falha():
     texto = json.dumps({"dependencies": [{"name": "idna", "version": "3.7", "vulns": []}]})
     assert _ler_pip_audit(texto, "requirements.txt") == []
+
+
+def test_vulnerabilidades_repetidas_viram_um_alerta_so():
+    texto = json.dumps(
+        {
+            "dependencies": [
+                {
+                    "name": "urllib3",
+                    "version": "1.23",
+                    "vulns": [
+                        {"id": "PYSEC-1", "fix_versions": ["1.24.2"]},
+                        {"id": "PYSEC-1", "fix_versions": ["1.24.2"]},
+                        {"id": "PYSEC-2", "fix_versions": ["1.26.19", "2.2.2"]},
+                        {"id": "PYSEC-3", "fix_versions": ["2.6.0"]},
+                    ],
+                }
+            ]
+        }
+    )
+    falhas = _ler_pip_audit(texto, "requirements.txt")
+    assert len(falhas) == 1
+    assert "2.6.0" in falhas[0].mensagem
+    assert "3 falhas" in falhas[0].mensagem
+
+
+def test_vulnerabilidade_sem_correcao_e_informada():
+    texto = json.dumps(
+        {
+            "dependencies": [
+                {
+                    "name": "antiga",
+                    "version": "0.1",
+                    "vulns": [{"id": "PYSEC-9", "fix_versions": []}],
+                }
+            ]
+        }
+    )
+    falhas = _ler_pip_audit(texto, "requirements.txt")
+    assert "sem versão corrigida" in falhas[0].mensagem

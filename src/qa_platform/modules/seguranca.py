@@ -3,6 +3,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from packaging.version import InvalidVersion, Version
+
 from qa_platform.modules.base import Falha
 
 NOME = "security"
@@ -29,17 +31,34 @@ def _ler_bandit(texto: str) -> list[Falha]:
     return falhas
 
 
+def _menor_correcao(versoes: list[str]) -> str | None:
+    validas = []
+    for texto in versoes:
+        try:
+            validas.append((Version(texto), texto))
+        except InvalidVersion:
+            continue
+    return min(validas)[1] if validas else None
+
+
 def _ler_pip_audit(texto: str, arquivo: str) -> list[Falha]:
     dados = json.loads(texto or "{}")
     falhas = []
     for dep in dados.get("dependencies", []):
-        for vuln in dep.get("vulns", []):
-            corrigido = ", ".join(vuln.get("fix_versions") or []) or "sem correção disponível"
-            mensagem = (
-                f"Dependência vulnerável: {dep['name']} {dep.get('version', '?')} "
-                f"({vuln['id']}) - corrigido em: {corrigido}"
-            )
-            falhas.append(Falha(NOME, mensagem, arquivo))
+        # o mesmo ID pode vir repetido: guarda um só
+        vulns = {v["id"]: v for v in dep.get("vulns", [])}
+        if not vulns:
+            continue
+        correcoes = [_menor_correcao(v.get("fix_versions") or []) for v in vulns.values()]
+        com_correcao = [c for c in correcoes if c]
+        base = f"Dependência vulnerável: {dep['name']} {dep.get('version', '?')}"
+        total = f"{len(vulns)} falhas conhecidas"
+        if com_correcao:
+            alvo = max(com_correcao, key=Version)
+            mensagem = f"{base} - atualizar para {alvo} ou superior ({total})"
+        else:
+            mensagem = f"{base} - sem versão corrigida disponível ({total})"
+        falhas.append(Falha(NOME, mensagem, arquivo))
     return falhas
 
 
