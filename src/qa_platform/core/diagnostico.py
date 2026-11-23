@@ -17,7 +17,7 @@ class Diagnostico:
     playbook: dict | None
 
 
-def _procurar_playbook(store: Store, fingerprint: str, mensagem: str) -> dict | None:
+def procurar_playbook(store: Store, fingerprint: str, mensagem: str) -> dict | None:
     # Ordem de prioridade: banco (guia salvo por você), depois os catálogos.
     return (
         store.buscar_playbook(fingerprint)
@@ -35,7 +35,7 @@ def diagnosticar(
     fingerprint = gerar_fingerprint(modulo, mensagem)
     ja_visto = store.registrar_bug(fingerprint, modulo, mensagem, stack)
     bug = store.buscar_bug(fingerprint)
-    playbook = _procurar_playbook(store, fingerprint, mensagem)
+    playbook = procurar_playbook(store, fingerprint, mensagem)
     return Diagnostico(
         fingerprint=fingerprint,
         ja_visto=ja_visto,

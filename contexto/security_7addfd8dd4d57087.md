@@ -1,0 +1,35 @@
+# Erro 7addfd8dd4d57087
+
+```
+Dependência vulnerável: idna 2.7 - atualizar para 3.15 ou superior (2 falhas conhecidas)
+```
+
+- **Módulo:** security
+- **Ocorrências:** 1
+- **Primeira vez:** 2026-11-22 22:49:21
+- **Última vez:** 2026-11-22 22:49:21
+
+## Guia de solução
+
+### O que aconteceu
+
+Uma biblioteca usada pelo projeto tem uma falha de segurança conhecida.
+
+### Por que acontece
+
+Falhas descobertas depois do lançamento são publicadas em bancos públicos de vulnerabilidades. Quem usa a versão antiga fica exposto.
+
+### Como resolver
+
+1. Veja na mensagem a versão em que a falha foi corrigida.  
+2. No terminal, com o ambiente virtual ativo, digite: pip install --upgrade idna  
+3. Atualize o número da versão no arquivo requirements.txt.  
+4. Rode os testes do projeto (pytest) para garantir que nada quebrou.
+
+### Como confirmar que resolveu
+
+Rode a análise de novo. A biblioteca não deve mais aparecer.
+
+### Se não funcionou
+
+Se a atualização quebrar o projeto, suba só até a menor versão corrigida. Se não existe versão corrigida, procure uma biblioteca alternativa.
