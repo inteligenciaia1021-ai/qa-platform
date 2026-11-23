@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from qa_platform.knowledge.catalogo import buscar_no_catalogo
+from qa_platform.knowledge.catalogo_deploy import buscar_no_catalogo_deploy
 from qa_platform.knowledge.catalogo_frontend import buscar_no_catalogo_frontend
 from qa_platform.knowledge.catalogo_python import buscar_no_catalogo_python
 from qa_platform.knowledge.catalogo_seguranca import buscar_no_catalogo_seguranca
@@ -23,6 +24,7 @@ def _procurar_playbook(store: Store, fingerprint: str, mensagem: str) -> dict | 
         or buscar_no_catalogo(mensagem)
         or buscar_no_catalogo_frontend(mensagem)
         or buscar_no_catalogo_seguranca(mensagem)
+        or buscar_no_catalogo_deploy(mensagem)
         or buscar_no_catalogo_python(mensagem)
     )
 
